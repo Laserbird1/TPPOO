@@ -24,6 +24,7 @@ int main ()
 //
 {
 	Catalogue *c=new Catalogue();
+    //(*c).Menu() ;
 	while (!(*c).Menu())
 	{
 	

@@ -1,0 +1,6 @@
+2 1
+#S,Lyon,La Rochelle,Avion
+#C,Lyon,Paris
+Lyon,Toulouse,train
+Toulouse,Paris,avion
+#S,Bordeaux,Saint Tropez,voiture
