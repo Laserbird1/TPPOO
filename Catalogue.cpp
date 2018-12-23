@@ -63,18 +63,16 @@ bool Catalogue::Menu ()
     {
         char nomfichier[100] ;
         cout <<"------------------------RESTITUTION-------------------------------" <<endl ;
-        cout <<"Attention, n'oubliez pas le .txt! Longueur max. 100 char" << endl ;
-        cout <<"nom du fichier source : ";
+       cout <<"Attention, longueur max. 100 char, n'indiquez pas l'extension" << endl ;
+        cout <<"nom du fichier cible : " ;
         cin.getline(nomfichier,100);
-        bool norme = conformiteNomFichier(nomfichier);
-        while(!norme)
+        while (!conformiteNomFichier(nomfichier))
         {
-            cout <<"nom de fichier non conforme... Reessayez :" ;
+	    cout<<"Le nom n'est pas valide, certains caractères speciaux sont interdits comme /, : ou un . au debut" << endl;
             cin.getline(nomfichier,100);
-            norme = conformiteNomFichier(nomfichier);
         }
-            
-        cout << nomfichier << endl ;
+	strcat(nomfichier, ".txt");
+        cout <<"Le fichier selectionné est "<< nomfichier<<endl ;
         cout <<"Quel type de restitution souhaitez-vous effectuer?"<< endl ;
         cout <<"Taper [n] pour accéder au service voulu" << endl ;
         cout <<"1. Restitution totale. " << endl ;
@@ -92,16 +90,16 @@ bool Catalogue::Menu ()
     {
         char nomfichier[100] ;
         cout <<"------------------------SAUVEGARDE-------------------------------" <<endl ;
-        cout <<"Attention, n'oubliez pas le .txt! Longueur max. 100 char" << endl ;
+        cout <<"Attention, longueur max. 100 char, n'indiquez pas l'extension" << endl ;
         cout <<"nom du fichier cible : " ;
         cin.getline(nomfichier,100);
-        bool norme = conformiteNomFichier(nomfichier);
-        while (!norme)
+        while (!conformiteNomFichier(nomfichier))
         {
+	    cout<<"Le nom n'est pas valide, certains caractères speciaux sont interdits comme /, : ou un . au debut" << endl;
             cin.getline(nomfichier,100);
-            norme = conformiteNomFichier(nomfichier);
         }
-        cout << nomfichier ;
+	strcat(nomfichier, ".txt");
+        cout <<"Le fichier selectionné est "<< nomfichier<<endl ;
         cout <<"Quel type de sauvegarde souhaitez-vous effectuer?"<< endl ;
         cout <<"Taper [n] pour accéder au service voulu" << endl ;
         cout <<"1. Sauvegarde totale. " << endl ;
@@ -110,8 +108,9 @@ bool Catalogue::Menu ()
         cout <<"4. Sauvegarde selon une sélection de trajets. "<< endl ;
         cout <<"------------------------------------------------------------------"<< endl ;
         char d ;
+	cin.clean();
         cin.get(d);
-        cin.ignore();
+        cin.ignore();//get n'enleve pas le \n qui suit
         sauvegarde(nomfichier,d) ;
         return false ;
         
@@ -121,7 +120,7 @@ bool Catalogue::Menu ()
     
     }else
     {
-        cout << "Attention ! Nous ne vous avons pas compris, veuillez \n saisir un numéro entre 1 et 6... " << endl ;
+        cout << "Attention ! Nous ne vous avons pas compris, veuillez \n saisir un numéro entre 1 et 8... " << endl ;
         return false ;
     }
     
@@ -309,7 +308,7 @@ void Catalogue::affichageOptionsMenu() const {
 void Catalogue::recuperation(const char* nomfichier, char selection)
 {
     //stream vers le fichier de sauvegarde
-    fstream fichier(nomfichier);
+    ifstream fichier(nomfichier);
     
     //booléens témoignant de l'état des sélections à faire
     bool selectTS = true ;
@@ -387,30 +386,18 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
                 
                 //cin.ignore();
                 cout <<" c : " << c << endl ;
-                if (c=='1')
+                if (c!='2')//c=1 ou c=3
                 {
                     cout <<"Ville de départ : " ;
                     cin.getline(villeDepart,40) ;
                     selectvD = true ;
                 }
-                else if (c=='2')
+                if (c!='1')//c=2 ou c=3
                 {
                     cout <<"Ville d'arrivée : " ;
                     cin.getline(villeArrivee,40) ;
                     selectvA = true ;
                 }
-                else
-                {
-                    cout <<"Ville de départ : " ;
-                    cin.getline(villeDepart,40) ;
-                    cout << endl ;
-                    cout <<"Ville d'arrivée : " ;
-                    cin.getline(villeArrivee,40) ;
-                    selectvA = true ;
-                    selectvD = true ;
-                    
-                }
-                
                 break ;
             
             case '4' :
@@ -790,28 +777,16 @@ void Catalogue::sauvegarde(const char*nomfichier, char selection)
 bool Catalogue::conformiteNomFichier(const char* nomfichier)
 {
     int length = strlen(nomfichier);
+	
     if (nomfichier[0]=='.') //le nom ne peut pas commencer par un point
+    return false;
+	
+    for (int i=0 ; i<length ; i++)
     {
-        return false ;
+        if (nomfichier[i]==':' || nomfichier[i]=='/' || nomfichier[i]<32)//le double point n'est jamais accepté sous Linux/Mac
+            return false ;        
     }
-    for (int i=0 ; i<length-4 ; i++)
-    {
-        if (nomfichier[i]==':'){ //le double point n'est jamais accepté sous Linux/Mac
-            return false ;
-        }
-        
-    }
-    
-    //l'extension doit etre la bonne
-    if (nomfichier[length-1]=='t' && nomfichier[length-2]=='x' && nomfichier[length-3]=='t'
-        && nomfichier[length-4]=='.')
-    {
-        return true ;
-    }
-    else
-    {
-        return false ;
-    }
+	return true;
 }
 
 
