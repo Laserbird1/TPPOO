@@ -649,4 +649,25 @@ void Catalogue::sauvegardeIntervalle()
 }
 
 //----------------------------------------------------- Méthodes protégées
+void Catalogue::Erase_First_Line(const char* File)
+{
+	string Buffer = ""; //Variable contenant le texte à réécrire dans le fichier
+	ifstream ReadFile(File);
+	if (ReadFile) //Si le fichier est trouvé
+	{
+		string line=new char[200];
+		int Line = 0;
+		while (getline(ReadFile, line)) //on parcours le fichier et on initialise line à la ligne actuelle
+		{
+			Line++;
+			if (Line != 0) //Si la ligne atteinte est différente de la ligne à supprimer...
+				Buffer += line + "\n"; //On ajoute le contenu de la ligne dans le contenu à réécrire
+		}
+	}
+	ReadFile.close(); //On ferme le fichier en lecture
+
+	ofstream WriteFile(File); //On ouvre ce même fichier en écriture
+	WriteFile << Buffer.c_str(); //On écris le texte dedans
+	WriteFile.close(); //et on ferme le fichier
+}
 
