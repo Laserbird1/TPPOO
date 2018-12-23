@@ -52,7 +52,7 @@ public:
     //méthode virtuelle pure obligeant à une redéfinition
     //dans les classes descendantes.
     
-    virtual const char getType()  = 0 ;
+    virtual char getType()  = 0 ;
     //Mode d'emploi : méthode virtuelle pure obligeant à une redéfinition,
     //renvoie C si Trajet Compose, S si Trajet Simple en char* tel que cette
     //méthod est redéfinie dans les classes filles.

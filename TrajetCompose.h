@@ -54,7 +54,7 @@ public:
     //de l'instance du TrajetCompose. (qui est non modifiable).
     //contrat : Le tableau n'est pas vide (car sinon, indéfini...)
     
-    const char getType() ;
+    char getType() ;
     //Mode d'emploi : renvoie C
     
     const char* getModeTransport() const  ;

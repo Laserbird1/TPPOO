@@ -46,7 +46,7 @@ const char* TrajetSimple::getModeTransport() const
     return modeTransport ;
 }//----- Fin de Méthode getModeTransport
 
-const char TrajetSimple::getType() 
+char TrajetSimple::getType()
 {
     return 'S' ;
 }//----- Fin de Méthode getType

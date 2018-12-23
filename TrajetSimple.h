@@ -48,7 +48,7 @@ public:
     //Mode d'emploi : Renvoie un pointeur sur la valeur du mode de transport
     //de l'instance du TrajetSimple. (qui est non modifiable).
     
-    const char getType() ;
+    char getType() ;
     //Mode d'emploi : renvoie S. 
     
     void outputFormate() const ; 

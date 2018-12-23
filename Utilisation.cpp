@@ -24,6 +24,7 @@ int main ()
 //
 {
 	Catalogue *c=new Catalogue();
+    //(*c).Menu() ;
 	while (!(*c).Menu())
 	{
 	
@@ -32,14 +33,4 @@ int main ()
     delete c ; 
     return 0 ; 
 } //----- fin de main
-
-
-//rentrée des noms de fichiers: pas de /, pas de caracteres dont le code est inf a 32 exclu 
-//sauvegarde d'un fichier total a faire, puis chaque selection 
-//restauration d'un fichier
-//compte-rendu 
-//mettre les numeros? 
-//faire attention aux getlines()
-//changer l'entree de donnees pour accepter les noms de ville avec des espaces
-//
 

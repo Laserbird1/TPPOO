@@ -48,9 +48,9 @@ const char* TrajetCompose::getVilleArrivee() const
     return villeArrivee ;
 } //----- Fin de Méthode getVilleArrivee
 
-const char TrajetCompose::getType() 
+char TrajetCompose::getType()
 {
-    return 'C' ; 
+    return 'C' ;
 }
 
 const char* TrajetCompose::getModeTransport() const
@@ -64,7 +64,7 @@ void TrajetCompose::outputFormate() const
    unsigned int tailleA = ensEtapes->getTailleActuelle() ; 
   for (unsigned int i=0 ; i<tailleA; i++)
   {
-    ensEtapes->getElement(i))->outputFormate() ;
+    ensEtapes->getElement(i)->outputFormate() ;
   }
   
   //attention, le \0 de villedepart et de villearrivee ne sera pas present lors de l'affichage 

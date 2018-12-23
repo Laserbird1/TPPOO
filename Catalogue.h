@@ -82,7 +82,7 @@ private :
     //contrat : la ville de départ et la ville d'arrivée doivent faire moins de 39 characteres sans espace.
 
     
-    void affichageOptionsMenu(int choix) const ;
+    void affichageOptionsMenu() const ;
     //Mode d'emploi: méthode de sorties standards permettant d'afficher les instructions
     //du menu. (sinon, surchage de la méthode Menu();
     //contrat: choix entre 0 et 2
@@ -91,43 +91,29 @@ private :
     //Mode d'emploi: pour sauvegarde, eviter les doublons
     //Contrat :
     
-    void recuperationTotale();
+    void recuperation(const char* nomfichier, char selection);
     //Mode d'emploi: 
     //Contrat :
     
-    void recuperationType();
-    //Mode d'emploi: 
-    //Contrat :
-    
-    void recuperationSelectionVille();
-    //Mode d'emploi: 
-    //Contrat :
-    
-    void recuperationIntervalle();
-    //Mode d'emploi: 
-    //Contrat :
-    
-    void sauvegardeTotale();
+    void sauvegarde(const char* nomfichier,char selection);
     //Mode d'emploi:
     //Contrat :
+
     
-    void sauvegardeType();
-    //Mode d'emploi:
-    //Contrat :
+    bool conformiteNomFichier(const char* nomfichier) ;
+    //Mode d'emploi: prend en paramètre un nom de fichier souhaité. Cette
+    //méthode vérifie la conformité du nom de fichier pour la création:
+    //le nom doit se terminer par .txt, ne peut contenir ':', et ne peut commencer
+    //par un '.'.
+    //Contrat : aucun 
     
-    void sauvegardeSelectionVille();
-    //Mode d'emploi:
-    //Contrat :
-    
-    void sauvegardeIntervalle();
-    //Mode d'emploi:
-    //Contrat :
-    
+  
 protected:
 //----------------------------------------------------- Méthodes protégées
+
+    void Erase_First_Line(const char* File); 
     
 //----------------------------------------------------- Attributs protégés
-fstream fichier ;  
 
 };
 
