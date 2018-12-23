@@ -35,6 +35,7 @@ bool Catalogue::Menu ()
     char c ;
     affichageOptionsMenu() ;
     cin.get(c); //laisse le \n dans le buffer
+    cin.ignore();
     if (c=='1')
     {
         rechercherUnTrajet() ;
@@ -64,7 +65,6 @@ bool Catalogue::Menu ()
         cout <<"------------------------RESTITUTION-------------------------------" <<endl ;
         cout <<"Attention, n'oubliez pas le .txt! Longueur max. 100 char" << endl ;
         cout <<"nom du fichier source : ";
-    
         cin.getline(nomfichier,100);
         bool norme = conformiteNomFichier(nomfichier);
         while(!norme)
@@ -84,6 +84,7 @@ bool Catalogue::Menu ()
         cout <<"------------------------------------------------------------------"<< endl ;
         char d ;
         cin.get(d) ;
+        cin.ignore();
         recuperation(nomfichier,d) ;
         return false ;
         
@@ -93,10 +94,10 @@ bool Catalogue::Menu ()
         cout <<"------------------------SAUVEGARDE-------------------------------" <<endl ;
         cout <<"Attention, n'oubliez pas le .txt! Longueur max. 100 char" << endl ;
         cout <<"nom du fichier cible : " ;
-        bool norme = false ;
+        cin.getline(nomfichier,100);
+        bool norme = conformiteNomFichier(nomfichier);
         while (!norme)
         {
-            cin.ignore() ;
             cin.getline(nomfichier,100);
             norme = conformiteNomFichier(nomfichier);
         }
@@ -110,6 +111,7 @@ bool Catalogue::Menu ()
         cout <<"------------------------------------------------------------------"<< endl ;
         char d ;
         cin.get(d);
+        cin.ignore();
         sauvegarde(nomfichier,d) ;
         return false ;
         
@@ -186,7 +188,7 @@ void Catalogue::ajouterUnTrajetSimple()
 	cout<<"------------------------AJOUT TRAJET SIMPLE----------------------" <<endl ;
 	cout<<"Attention: ne pas inserer d'espaces" <<endl;
 	cout<<"Ville de depart    : ";
-    cin.ignore(); //ignore le dernier char dans le buffer (car utilisation cin dans le menu)
+    //cin.ignore(); //ignore le dernier char dans le buffer (car utilisation cin dans le menu)
     cin.getline(villeDep,40);
     cout<<endl;
     cout<<"Ville de d'arrivee : ";
@@ -221,7 +223,7 @@ void Catalogue::ajouterUnTrajetCompose()
     cout<<"Attention: ne pas insérer d'espaces"<<endl;
 	cout<<i<<"e Etape : "<< endl;
 	cout<<"Ville de depart    : ";
-    cin.ignore(); //ignore le dernier char dans le buffer (car utilisation cin dans le menu)
+    //cin.ignore();
     cin.getline(vD,40);
     cout<<endl;
 	cout<<"Ville d'arrivee    : ";
@@ -251,7 +253,7 @@ void Catalogue::ajouterUnTrajetCompose()
         cout << "Moyen de transport : ";
         cin.getline(mTsuite,40);
         cout << endl;
-        cout<<"Continuer? [1: OUI/ 0:NON]";
+        cout<<"Continuer? [1: OUI/ 0:NON] ";
         cin.get(continuer);
         cin.ignore() ;
 
@@ -338,8 +340,8 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
                 cout <<" 1. Trajets Simples" << endl ;
                 cout <<" 2. Trajets Composes" << endl ;
                 cout <<"choix : " ;
-                cin.ignore();
                 cin.get(c);
+                cin.ignore();
                 
                 while (c!='1' && c!='2')
                 {
@@ -348,10 +350,10 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
                     cout <<"erreur, reessayez : " ;
                     cin.get(c);
+                    cin.ignore();
                 
                 }
                 
-                cin.ignore() ;
                 if (c=='1')
                 {
                     selectTC = false ;
@@ -369,9 +371,9 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
                 cout <<"2. Ville d'arrivée " << endl ;
                 cout <<"3. Ville de départ et d'arrivée " << endl ;
                 cout <<"choix : " ;
-                cin.ignore();
+                //cin.ignore();
                 cin.get(c);
-                
+                cin.ignore();
                 while(c!='1' && c!='2' && c!='3')
                 {
                     //on nettoie le istream au cas ou l'utilisateur a entrer plusieurs caracteres
@@ -379,10 +381,11 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
                     cout << "erreur,reessayez : " ;
                     cin.get(c);
+                    cin.ignore();
                     
                 }
                 
-                cin.ignore();
+                //cin.ignore();
                 cout <<" c : " << c << endl ;
                 if (c=='1')
                 {
@@ -414,7 +417,7 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
                 char nbr1[40]={} ;
                 char nbr2[40]={} ;
                 cout <<"borne inférieure : " ;
-                cin.ignore();
+                //cin.ignore();
                 cin.getline(nbr1,40) ;
                 try
                 {
@@ -584,17 +587,18 @@ void Catalogue::sauvegarde(const char*nomfichier, char selection)
             cout << " 1. Trajets Simples" << endl;
             cout << " 2. Trajets Composes" << endl;
             cout << "choix : ";
-            cin >> c;
+            cin.get(c);
+            cin.ignore();
             while (c != '1' && c != '2')
             {
-                //on nettoie le istream au cas ou l'utilisateur a entre plusieurs caracteres
+                //on nettoie le istream au cas ou l'utilisateur à entré plusieurs caractères
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 cout << "erreur, reessayez : ";
-                cin >> c;
+                cin.get(c);
+                cin.ignore();
                 
             }
-            cin.ignore();
             if (c == '1')
             {
                 selectTC = false;
@@ -610,50 +614,65 @@ void Catalogue::sauvegarde(const char*nomfichier, char selection)
             cout << "2. Ville d'arrivée " << endl;
             cout << "3. Ville de départ et d'arrivée " << endl;
             cout << "choix : ";
-            cin >> c;
+            cin.get(c);
+            cin.ignore();
             while (c != '1' && c != '2' && c != '3')
             {
                 //on nettoie le istream au cas ou l'utilisateur a entre plusieurs caracteres
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cout << "erreur,reesayez : ";
-                cin >> c;
+                cout << "erreur, reessayez : ";
+                cin.get(c);
+                cin.ignore();
             }
             if (c == '1' || c=='3')
             {
-                cout << "Rentrz la ville de départ :" << endl;
+                cout << "Rentrez la ville de départ : " ;
                 cin.getline(selectvilleD, 40);
                 cout << endl;
             }
             if (c == '2' || c=='3')
             {
-                cout << "Rentrz la ville d'arrivée :" << endl;
+                cout << "Rentrez la ville d'arrivée : " ;
                 cin.getline(selectvilleA, 40);
                 cout << endl;
             }
             break;//du 3
         case '4':
-            cout << "Combien voulez de trajets ?" << endl;
-            cin >> borne2;
-            cout << "A partir d'où voulez vous partir ?" << endl;
-            cin >> borne1;
+            char b1[5]= {} ;
+            char b2[5]= {} ;
             
-            --borne1;
-            --borne2;//mise en repère tableau (rentrer 1 donnera le premier élément situé en [0])
+            cout << "Combien voulez de trajets ? " ;
+            cin.getline(b2,5);
+            cout << "A partir d'où voulez vous partir ? " ;
+            cin.getline(b1,5);
+            try
+            {
+                borne1 = stoi(b1);
+                borne2 = stoi(b2);
+            
+            } catch (const std::invalid_argument& ia)
+            {
+                cout << "Ceci n'est pas un nombre. Invalidation de la demande. " << endl ;
+                return ;
+            }
+            
+            --borne1; //mise en repère tableau (rentrer 1 donnera le premier élément situé en [0])
+            
             
             borne1 = borne1 < 0 ? 0 : borne1;
-            borne2 = borne2 < 0 ? 0 : borne2;//ici a valeur de cb de trajet a prendre !
+            borne2 = borne2 < 0 ? 0 : borne2;//ici la valeur de cb de trajet a prendre !
             
             borne1 = borne1 < tailleActuelle ? borne1 : tailleActuelle;
-            borne2=borne1+borne2 < tailleActuelle ? borne1+borne2 : tailleActuelle;
+            borne2= borne1+borne2 < tailleActuelle ? borne1+borne2 : tailleActuelle;
             break;
     }
     
     
-    std::fstream fichier;
+    fstream fichier;
     
-    fichier.open(nomfichier, ios_base::in);
-    //
+    fichier.open(nomfichier);
+    
     int nbTC = 0;
     int nbTS = 0;
     
@@ -661,7 +680,7 @@ void Catalogue::sauvegarde(const char*nomfichier, char selection)
     {
         cout << "Le fichier existe déjà, voulez-vous l'écraser ?(e) ou écrire à la suite ?(s)" << endl;
         int fait = 0;
-        cin >> c;
+        cin.get(c);
         while (!fait)
         {
             fait = 1;
@@ -674,8 +693,22 @@ void Catalogue::sauvegarde(const char*nomfichier, char selection)
             else if (c == 's')
             {
                 //recuperation n° au début
-                fichier >> nbTS;
-                fichier >> nbTC;
+                string nbr1, nbr2 ;
+                getline(fichier,nbr1,'|');
+                getline(fichier,nbr2);
+                cout <<"NBR1 : "<< nbr1 << endl ;
+                cout <<"NBR2 : "<< nbr2 << endl ;
+                try
+                {
+                    nbTS = stoi(nbr1);
+                    nbTC = stoi(nbr2);
+                    
+                } catch (const std::invalid_argument& ia)
+                {
+                    cout << "Ceci n'est pas un nombre. Invalidation de la demande. " << endl ;
+                    return ;
+                }
+            
                 fichier.close();
                 Erase_First_Line(nomfichier);//effacement de la ligne contenant les numéros au début en réécrivant le reste
                 fichier.open(nomfichier, ios_base::ate);//puis réécriture à la fin
@@ -696,12 +729,13 @@ void Catalogue::sauvegarde(const char*nomfichier, char selection)
     
     if (fichier)//si ouverture (a priori le fichier existe maintenant)
     {
-        streambuf*oldStreamBuffer = cout.rdbuf(fichier.rdbuf());
-        
-        
+        cout << "on redirige le buffer vers le fichier" << endl ;
+        streambuf *oldStreamBuffer = cout.rdbuf(fichier.rdbuf());
+        fichier.seekp(5); //on fait de la place pour l'affichage des nombres de trajet
         for (unsigned int i = borne1; i < borne2; i++)
         {
             const char type = tableau[i]->getType();
+
             bool ajout = true;
             
             if (selection == '3' && (c == '1'|| c=='3') && strcmp(tableau[i]->getVilleDepart(),selectvilleD)!=0)
@@ -712,36 +746,43 @@ void Catalogue::sauvegarde(const char*nomfichier, char selection)
             {
                 ajout = false;
             }
-            if (!(selectTS && type=='S'))
+            if (!(selectTS) && type=='S')
             {
                 ajout = false;
             }
-            if (!(selectTC && type=='C'))
+            if (!(selectTC) && type=='C')
             {
                 ajout = false;
             }
             
             if (ajout)
             {
-                cout << '#' << type << ',';
+                fichier << '#' << type << ',';
                 //incrémentation du nombre de trajet par type
-                if (type=='S') nbTS++;
-                else nbTC++;
+                if (type=='S')
+                {
+                    nbTS++;
+                }
+                else
+                {
+                    nbTC++;
+                }
+                
                 tableau[i]->outputFormate();
             }
         }
         
         //on met à jour le fichier avec les nombre de trajet au debut
-        if (nbTC != 0 && nbTS != 0)
+        if (nbTC != 0 || nbTS != 0)
         {
             fichier.seekp(0);
-            cout << nbTS << " " << nbTC << endl;
+            cout << nbTS << "-" << nbTC << endl;
         }
         cout.rdbuf(oldStreamBuffer);
         fichier.close();
     }
     else
-        cerr << "Ouverture du fichier impossible impossible" << endl;
+        cerr << "Ouverture du fichier impossible" << endl;
 }
 
 
