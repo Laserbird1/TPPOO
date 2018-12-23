@@ -450,41 +450,189 @@ void Catalogue::recuperationIntervalle()
   
 }
 
-void Catalogue::sauvegardeTotale(const char*nomfichier)
+void Catalogue::sauvegardeTotale(const char*nomfichier, char selection)
+//saveType :
+//1 sauvegarde tout
+//2 sauvegarde les TC ou TS
+//3 sauvegarde selon la ville de depart/arrivee
+//4 selon une selection de trajet
 {
-  
-  fichier.open(nomfichier,ofstream::app);
-  
-  long pos =fichier.tellp();
-  int nbTC;
-  int nbTS;
-  if(pos>0)
-  {
-    fichier.seekp(ios_base::beg);
-    //recuperation n° au début 
-    char* s=char[8];
-    fichier.getline(fichier,s,' ');
-    TS=stoi(s)
-    
-    fichier.seekp(pos);
-  }
-  else
-  {
-    nbTC=0;
-    nbTS=0;
-  }
-  
-  streambuf*oldStreamBuffer=cout.rdbuf(fichier.rdbuf());
-  for(unsigned int i=0 ; i<tailleActuelle ; i++)
-  {
-    cout<<"#"<<tableau[i]->getType()<<" ";
-    //placement numero de trajet
-    tableau[i]->outputFormate();
-  }
-  
-  cout.rdbuf(oldStreamBuffer);
-}
+	bool selectTC = true;
+	bool selectTS = true;
+	char* selectvilleA = new char[40];
+	char* selectvilleD = new char[40];
+	unsigned int borne1 = 0;
+	unsigned int borne2 = tailleActuelle;
+	char c;
 
+	switch (selection)
+	{
+	case '1':
+		break;
+	case '2':
+		cout << "Choisissez le type de trajet à restituer : " << endl;
+		cout << " 1. Trajets Simples" << endl;
+		cout << " 2. Trajets Composes" << endl;
+		cout << "choix : ";
+		cin >> c;
+		while (c != '1' && c != '2')
+		{
+			//on nettoie le istream au cas ou l'utilisateur a entre plusieurs caracteres
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			cout << "erreur, reessayez : ";
+			cin >> c;
+
+		}
+		cin.ignore();
+		if (c == '1')
+		{
+			selectTC = false;
+		}
+		else
+		{
+			selectTS = false;
+		}
+		break;
+	case '3':
+		cout << "Quelle(s) ville(s) souhaitez-vous spécifier? " << endl;
+		cout << "1. Ville de départ " << endl;
+		cout << "2. Ville d'arrivée " << endl;
+		cout << "3. Ville de départ et d'arrivée " << endl;
+		cout << "choix : ";
+		cin >> c;
+		while (c != '1' && c != '2' && c != '3')
+		{
+			//on nettoie le istream au cas ou l'utilisateur a entre plusieurs caracteres
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			cout << "erreur,reesayez : ";
+			cin >> c;
+		}
+		if (c == '1' || c=='3')
+		{
+			cout << "Rentrz la ville de départ :" << endl;
+			cin.getline(selectvilleD, 40);
+			cout << endl;
+		}
+		if (c == '2' || c=='3')
+		{
+			cout << "Rentrz la ville d'arrivée :" << endl;
+			cin.getline(selectvilleA, 40);
+			cout << endl;
+		}
+		break;//du 3
+	case '4':
+		cout << "Combien voulez de trajets ?" << endl;
+		cin >> borne2;
+		cout << "A partir d'où voulez vous partir ?" << endl;
+		cin >> borne1;
+
+		--borne1;
+		--borne2;//mise en repère tableau (rentrer 1 donnera le premier élément situé en [0])
+
+		borne1 = borne1 < 0 ? 0 : borne1;
+		borne2 = borne2 < 0 ? 0 : borne2;//ici a valeur de cb de trajet a prendre !
+
+		borne1 = borne1 < tailleActuelle ? borne1 : tailleActuelle;
+		borne2=borne1+borne2 < tailleActuelle ? borne1+borne2 : tailleActuelle;
+		break;
+	}
+
+
+	std::fstream fichier;
+
+	fichier.open(nomfichier, ios_base::in);
+	//
+	int nbTC = 0;
+	int nbTS = 0;
+
+	if (fichier)
+	{
+		cout << "Le fichier existe déjà, voulez-vous l'écraser ?(e) ou écrire à la suite ?(s)" << endl;
+		int fait = 0;
+		cin >> c;
+		while (!fait)
+		{
+			fait = 1;
+			if (c == 'e')
+			{
+				//réouverture du fichier en supprimant le contenu
+				fichier.close();
+				fichier.open(nomfichier, ios_base::trunc);
+			}
+			else if (c == 's')
+			{
+				//recuperation n° au début 
+				fichier >> nbTS;
+				fichier >> nbTC;
+				fichier.close();
+				Erase_First_Line(nomfichier);//effacement de la ligne contenant les numéros au début en réécrivant le reste 
+				fichier.open(nomfichier, ios_base::ate);//puis réécriture à la fin
+
+			}
+			else
+			{
+				cout << "Attention ! Nous ne vous avons pas compris, veuillez \n saisir e ou s... " << endl;
+				fait = 0;
+			}
+		}
+	}
+	else//le fichier n'existe pas
+	{
+		fichier.close();
+		fichier.open(nomfichier, ios_base::out);
+	}
+
+	if (fichier)//si ouverture (a priori le fichier existe maintenant)
+	{
+		streambuf*oldStreamBuffer = cout.rdbuf(fichier.rdbuf());
+
+
+	for (unsigned int i = borne1; i < borne2; i++)
+	{
+		const char *type = tableau[i]->getType();
+		bool ajout = true;
+
+		if (selection == '3' && (c == '1'|| c=='3') && strcmp(tableau[i]->getVilleDepart(),selectvilleD)!=0)
+		{
+			ajout = false;
+		}
+		if (selection == '3' && (c == '2' || c == '3') && strcmp(tableau[i]->getVilleArrivee(), selectvilleA) != 0)
+		{
+			ajout = false;
+		}
+		if (!(selectTS && strcmp(type, "S")))
+		{
+			ajout = false;
+		}
+		if (!(selectTC && strcmp(type, "C")))
+		{
+			ajout = false;
+		}
+
+		if (ajout)
+		{
+			cout << '#' << type << ',';
+			//incrémentation du nombre de trajet par type
+			if (strcmp(type, "S") == 0) nbTS++;
+			else nbTC++;
+			tableau[i]->outputFormate();
+		}
+	}
+
+	//on met à jour le fichier avec les nombre de trajet au debut
+	if (nbTC != 0 && nbTS != 0)
+	{
+		fichier.seekp(0);
+		cout << nbTS << " " << nbTC << endl;
+	}
+	cout.rdbuf(oldStreamBuffer);
+	fichier.close();
+	}
+	else
+		cerr << "Ouverture du fichier impossible impossible" << endl;
+}
 void Catalogue::sauvegardeType()
 {
   
