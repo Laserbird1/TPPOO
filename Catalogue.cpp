@@ -591,7 +591,7 @@ void Catalogue::sauvegardeTotale(const char*nomfichier, char selection)
 
 	for (unsigned int i = borne1; i < borne2; i++)
 	{
-		const char *type = tableau[i]->getType();
+		char type = tableau[i]->getType();
 		bool ajout = true;
 
 		if (selection == '3' && (c == '1'|| c=='3') && strcmp(tableau[i]->getVilleDepart(),selectvilleD)!=0)
@@ -602,11 +602,11 @@ void Catalogue::sauvegardeTotale(const char*nomfichier, char selection)
 		{
 			ajout = false;
 		}
-		if (!(selectTS && strcmp(type, "S")))
+		if (!(selectTS && type=='S'))
 		{
 			ajout = false;
 		}
-		if (!(selectTC && strcmp(type, "C")))
+		if (!(selectTC && type== 'C'))
 		{
 			ajout = false;
 		}
@@ -615,7 +615,7 @@ void Catalogue::sauvegardeTotale(const char*nomfichier, char selection)
 		{
 			cout << '#' << type << ',';
 			//incrémentation du nombre de trajet par type
-			if (strcmp(type, "S") == 0) nbTS++;
+			if (type=='S') nbTS++;
 			else nbTC++;
 			tableau[i]->outputFormate();
 		}
