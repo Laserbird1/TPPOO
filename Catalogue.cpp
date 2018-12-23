@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits>
 
 using namespace std;
 
@@ -34,7 +35,8 @@ bool Catalogue::Menu ()
     cin.clear();
     char c ;
     affichageOptionsMenu() ;
-    cin >> c;
+    cin.get(c);
+    cin.ignore();
     if (c=='1')
     {
         rechercherUnTrajet() ;
@@ -64,16 +66,14 @@ bool Catalogue::Menu ()
         cout <<"------------------------RESTITUTION-------------------------------" <<endl ;
         cout <<"Attention, n'oubliez pas le .txt! Longueur max. 100 char" << endl ;
         cout <<"nom du fichier source : ";
-        
-        cin.ignore() ;
+    
         cin.getline(nomfichier,100);
         bool norme = conformiteNomFichier(nomfichier);
         while(!norme)
         {
-            cout <<"nom de fichier non conforme... Ressayer :" ;
+            cout <<"nom de fichier non conforme... Reessayez :" ;
             cin.getline(nomfichier,100);
             norme = conformiteNomFichier(nomfichier);
-            cout << nomfichier << endl ;
         }
             
         cout << nomfichier << endl ;
@@ -86,25 +86,7 @@ bool Catalogue::Menu ()
         cout <<"------------------------------------------------------------------"<< endl ;
         char d ;
         cin >> d ;
-        switch (d)
-        {
-            case '1' :
-                cout <<"choix 1" << endl ;
-                recuperationTotale(nomfichier);
-                break ;
-            case '2' :
-                recuperationType(nomfichier) ;
-                break ;
-            case '3' :
-                recuperationSelectionVille(nomfichier) ;
-                break ;
-            case '4' :
-                recuperationIntervalle(nomfichier);
-                break ;
-            default :
-                cout <<"erreur, nous ne vous avons pas compris..."<< endl ;
-        }
-    
+        recuperation(nomfichier,d) ;
         return false ;
         
     } else if (c=='7')
@@ -258,21 +240,20 @@ void Catalogue::ajouterUnTrajetCompose()
     cout<<"Attention: ne pas insérer d'espaces"<<endl;
 	cout<<i<<"e Etape : "<< endl;
 	cout<<"Ville de depart    : ";
-   	cin>>vD;
+    cin.ignore(); //ignore le dernier char dans le buffer (car utilisation cin dans le menu)
+    cin.getline(vD,40);
     cout<<endl;
 	cout<<"Ville d'arrivee    : ";
-    cin>>vA;
+    cin.getline(vA,40);
     cout<<endl;
 	cout << "Moyen de transport : ";
-	cin >> mT;
+    cin.getline(mT,40);
 	cout << endl;
     strcpy(villeDepart,vD);
     strcpy(villeArrPrecedente,vA);
 	i++;
-
 	TrajetSimple *trajet= new TrajetSimple(vD, vA, mT);
 	ensembleT->AjoutTrajet(trajet);
-	ensembleT->Afficher();
     
 	while(continuer=='1')
 	{
@@ -280,33 +261,18 @@ void Catalogue::ajouterUnTrajetCompose()
 		char* vAsuite=new char[40];
 		char* mTsuite=new char[40];
 		cout<<i<<"e Etape : "<< endl;
-		cout<<"Ville de depart    : ";
-		cin>>vDsuite;
-		cout<<endl;
-      
-        while (strcmp(vDsuite,villeArrPrecedente)!=0)
-        {
-
-            cout <<"INCOMPATIBLE AVEC ETAPE PRECEDENTE : " << villeArrPrecedente << endl;
-            cout <<"REESSAYER : " ;
-            cout << "\n " << endl;
-            cout << "RAPPEL Ville d'arrivée précédente : " << vD<< endl;
-            cout<<"Ville de depart    : " <<endl ;
-            cin >> vDsuite ;
-            cout << endl ;
-        }
-
-	
-        cout<<"Ville d'arrivee    : ";
-        cin>>vAsuite;
+        strcpy(vDsuite,villeArrPrecedente);
+        cout<<"Ville de passage   : ";
+        cin.getline(vAsuite,40);
         villeArrPrecedente = strcpy(villeArrPrecedente,vAsuite);
 
         cout << endl;
         cout << "Moyen de transport : ";
-        cin >> mTsuite;
+        cin.getline(mTsuite,40);
         cout << endl;
         cout<<"Continuer? [1: OUI/ 0:NON]";
-        cin>>continuer;
+        cin.get(continuer);
+        cin.ignore() ;
 
         TrajetSimple *trajet2= new TrajetSimple(vDsuite,vAsuite, mTsuite);
         ensembleT->AjoutTrajet(trajet2);
@@ -314,7 +280,8 @@ void Catalogue::ajouterUnTrajetCompose()
         while(continuer!='1' && continuer!='0')
         {
             cout<<"Ressayer  :  ";
-            cin>>continuer;
+            cin.get(continuer);
+            cin.ignore();
         }
         cout<<endl ;
         i++;
@@ -356,15 +323,73 @@ void Catalogue::affichageOptionsMenu() const {
 
 
 
-void Catalogue::recuperationTotale(const char* nomfichier)
+void Catalogue::recuperation(const char* nomfichier, char selection)
 {
     fstream fichier(nomfichier);
+    bool selectTS = true ;
+    bool selectTC = true ;
+    string villeDepart ;
+    string villeArrivee ;
+    
     if (!fichier.is_open())
     {
-        cout <<"Recuperation impossible : fichier non existant "<<endl;
+        cout <<"Recuperation impossible : fichier non existant " <<endl;
     }
     else
     {
+        char c ;
+        switch (selection)
+        {
+            case '1' :
+                break ;
+            case '2' :
+                cout <<"Choississez le type de trajet à restituer : " << endl ;
+                cout <<" 1. Trajets Simples" << endl ;
+                cout <<" 2. Trajets Composes" << endl ;
+                cout <<"choix : " ;
+                cin.ignore();
+                cin.get(c);
+                while (c!='1' && c!='2')
+                {
+                    //on nettoie le istream au cas ou l'utilisateur a entrer plusieurs caracteres
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cout <<"erreur, reessayez : " ;
+                    cin.get(c);
+                
+                }
+                cin.ignore() ;
+                if (c=='1')
+                {
+                    selectTC = false ;
+                }
+                else
+                {
+                    selectTS = false ;
+                }
+                break ;
+            case '3' :
+                cout <<"Quelle(s) ville(s) souhaitez-vous spécifier? " <<endl ;
+                cout <<"1. Ville de départ " << endl ;
+                cout <<"2. Ville d'arrivée " << endl ;
+                cout <<"3. Ville de départ et d'arrivée " << endl ;
+                cout <<"choix : " ;
+                cin.ignore();
+                cin.get(c);
+                while(c!='1' && c!='2' && c!='3')
+                {
+                    //on nettoie le istream au cas ou l'utilisateur a entrer plusieurs caracteres
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cout << "erreur,reesayez : " ;
+                    cin.get(c);
+                }
+                break ;
+            case '4' :
+                break ;
+                
+        }
+        
         string line ;
         while (!fichier.eof())
         {
@@ -373,58 +398,109 @@ void Catalogue::recuperationTotale(const char* nomfichier)
             
             if (line[0]=='#')
             {
-                if(line[1]=='S')
+                if(line[1]=='S' && selectTS)
                 {
+                    lectureTS(line);
+                    
+                } else if (line[1]=='C' && selectTC)
+                {
+                    Tableau *ensembleT = new Tableau(2);
+                    char villeD[40]={} ;
                     int i= 3;
                     int j = 0 ;
-                    char villeD[40] = {};
-                    //char *villeD= new char[40];
-                    for (int z= 0 ; z<40 ; z++)
-                    {
-                        villeD[0]=0 ;
-                    }
-                    while(line[i]!=',') //on commence au premier caractere appartenant a villeD
-                    {
-                       //cout << line[i] << endl ;
-                       villeD[j]=line[i];
-                       i++ ;
-                       j++ ;
-                    }
-                    i++ ;
-                    char villeA[40] = {} ;
-                    //char *villeA= new char[40];
-                    j= 0 ;
-                    
                     while(line[i]!=',')
                     {
-                       villeA[j]=line[i];
-                       i++ ;
-                       j++ ;
-                    }
-                    char modeT[40] = {} ;
-                    //char *modeT= new char[40];
-                    j =0 ;
-                    for (unsigned long k=i+1 ; k<line.length(); k++)
-                    {
-                        modeT[j]=line[k];
+                        villeD[j]=line[i];
+                        i++ ;
                         j++ ;
                     }
-                    TrajetSimple *t = new TrajetSimple(villeD,villeA,modeT);
-                    AjoutTrajet(t);
-                    //delete [] modeT ;
-                    //delete [] villeD ;
-                    //delete [] villeA ;
+                    
+                    i++ ;
+                    char villeA[40]={} ;
+                    j= 0 ;
+                    while(line[i]!=',')
+                    {
+                        villeA[j]=line[i];
+                        i++ ;
+                        j++ ;
+                    }
+                    
+                    int nbrEtapes = line[i+1] - '0';
+                    cout <<"char " << line[i+1] << endl ;
+                    cout <<"nombre etapes : "<< nbrEtapes << endl ;
+                   
+                    
+                    for (int e=0 ; e<nbrEtapes ; e++) //AJOUT D'UNE VARIABLE NBR ETAPES
+                    {
+                        getline(fichier,line);
+                        int i= 0;
+                        int j = 0 ;
+                        char etapeD[40] = {};
+                        while(line[i]!=',') //on commence au premier caractere appartenant a villeD
+                        {
+                            etapeD[j]=line[i];
+                            i++ ;
+                            j++ ;
+                        }
+                        i++ ;
+                        char etapeA[40] = {} ;
+                        j= 0 ;
+                        
+                        while(line[i]!=',')
+                        {
+                            etapeA[j]=line[i];
+                            i++ ;
+                            j++ ;
+                        }
+                        char mT[40] = {} ;
+                        j =0 ;
+                        for (unsigned long k=i+1 ; k<line.length(); k++)
+                        {
+                            mT[j]=line[k];
+                            j++ ;
+                        }
+                        TrajetSimple *t = new TrajetSimple(etapeD,etapeA,mT);
+                        ensembleT->AjoutTrajet(t);
+                    }
+                    TrajetCompose *tc = new TrajetCompose(villeD,villeA,ensembleT);
+                    AjoutTrajet(tc);
+                
                 }
             }
         }
     }
-    
-    
 }
 
-void Catalogue::recuperationType(const char* nomfichier)
+void Catalogue::lectureTS(string line)
 {
-  
+    int i= 3;
+    int j = 0 ;
+    char villeD[40] = {};
+    while(line[i]!=',') //on commence au premier caractere appartenant a villeD
+    {
+        villeD[j]=line[i];
+        i++ ;
+        j++ ;
+    }
+    i++ ;
+    char villeA[40] = {} ;
+    j= 0 ;
+    
+    while(line[i]!=',')
+    {
+        villeA[j]=line[i];
+        i++ ;
+        j++ ;
+    }
+    char modeT[40] = {} ;
+    j =0 ;
+    for (unsigned long k=i+1 ; k<line.length(); k++)
+    {
+        modeT[j]=line[k];
+        j++ ;
+    }
+    TrajetSimple *t = new TrajetSimple(villeD,villeA,modeT);
+    AjoutTrajet(t);
 }
 
 void Catalogue::recuperationSelectionVille(const char* nomfichier)

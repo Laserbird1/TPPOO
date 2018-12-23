@@ -91,11 +91,7 @@ private :
     //Mode d'emploi: pour sauvegarde, eviter les doublons
     //Contrat :
     
-    void recuperationTotale(const char* nomfichier);
-    //Mode d'emploi: 
-    //Contrat :
-    
-    void recuperationType(const char* nomfichier);
+    void recuperation(const char* nomfichier, char selection);
     //Mode d'emploi: 
     //Contrat :
     
@@ -130,6 +126,10 @@ private :
     //par un '.'.
     //Contrat : aucun 
     
+    void lectureTS(string line) ;
+    //Mode d'emploi:
+    //contrat :
+  
 protected:
 //----------------------------------------------------- Méthodes protégées
     
