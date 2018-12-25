@@ -76,12 +76,10 @@ bool Catalogue::Menu ()
         bool norme = conformiteNomFichier(nomfichier);
         while(!norme)
         {
-            cout <<"nom de fichier non conforme... Reessayez :" ;
+            cout <<"nom de fichier non conforme... Reessayez : " ;
             cin.getline(nomfichier,100);
             norme = conformiteNomFichier(nomfichier);
         }
-            
-        cout << nomfichier << endl ;
         cout <<"Quel type de restitution souhaitez-vous effectuer?"<< endl ;
         cout <<"Taper [n] pour accéder au service voulu" << endl ;
         cout <<"1. Restitution totale. " << endl ;
@@ -106,10 +104,10 @@ bool Catalogue::Menu ()
         bool norme = conformiteNomFichier(nomfichier);
         while (!norme)
         {
+            cout <<" nom de fichier non conforme... Reessayez : " ; 
             cin.getline(nomfichier,100);
             norme = conformiteNomFichier(nomfichier);
         }
-        cout << nomfichier ;
         cout <<"Quel type de sauvegarde souhaitez-vous effectuer?"<< endl ;
         cout <<"Taper [n] pour accéder au service voulu" << endl ;
         cout <<"1. Sauvegarde totale. " << endl ;
@@ -538,8 +536,7 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
                         modeT[j]=line[k];
                         j++ ;
                     }
-                    cout << "[" <<borneinf<<","<<bornesup<<"]" << endl ;
-                    cout << nbrTrajet << endl ;
+    
                     //si un filtre de ville est selectionné, alors il faut que la ville corresponde.
                     if ((selectvD && strcmp(villeDepart,villeD)==0) || (selectvA && strcmp(villeArrivee,villeA)==0)
                         ||(!(selectvD)&&!(selectvA)&&(!selectIntervalle)) || (selectIntervalle &&nbrTrajet>=borneinf && nbrTrajet<=bornesup))
@@ -570,8 +567,7 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
                         i++ ;
                         j++ ;
                     }
-                    cout << "[" <<borneinf<<","<<bornesup<<"]" << endl ;
-                    cout << nbrTrajet << endl ;
+
                     if ((selectvD&&strcmp(villeDepart,villeD)==0)|| (selectvA && strcmp(villeArrivee,villeA)==0)
                         ||(!(selectvD)&&!(selectvA)&&(!selectIntervalle)) || (selectIntervalle&& nbrTrajet>=borneinf && nbrTrajet<=bornesup))
                     {
@@ -773,7 +769,7 @@ void Catalogue::sauvegarde(const char*nomfichier, char selection)
             }
             else if (c=='a')
             {
-                cout << "abandon " << endl ; 
+                cout << "abandon " << endl ;
                 return ;
             }
             else
@@ -833,11 +829,9 @@ void Catalogue::sauvegarde(const char*nomfichier, char selection)
     }
     
     //on met à jour le fichier avec les nombre de trajet au debut
-    if (nbTC != 0 || nbTS != 0)
-    {
-        fichier.seekp(0);
-        cout << nbTS << "-" << nbTC << endl;
-    }
+    fichier.seekp(0);
+    cout << nbTS << "-" << nbTC << endl;
+    
     cout.rdbuf(oldStreamBuffer);
     fichier.close();
 }
