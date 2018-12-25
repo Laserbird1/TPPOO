@@ -19,7 +19,7 @@ CPPFLAGS = -W -Wall -g -pedantic -O2 -Wextra -ansi -std=c++11
 .PHONY = $(EFFACE)
 
 ($EXE):$(OBJ)
-	$(ECHO) "EdL de <Test>"TP C++.zip
+	$(ECHO) "EdL de <Test>"
 	$(EDL) -o $(EXE) $(OBJ) $(LIBS)
   
 %.o : %.cpp %.h
