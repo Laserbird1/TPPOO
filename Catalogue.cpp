@@ -87,10 +87,18 @@ bool Catalogue::Menu ()
         cout <<"3. Restitution selon la ville de départ et/ou ville d'arrivée. " << endl ;
         cout <<"4. Restitution selon une sélection de trajets. "<< endl ;
         cout <<"------------------------------------------------------------------"<< endl ;
+        cout <<"choix : " ;
         char d ;
         cin.get(d) ;
         cin.clear(); //nettoyage du stream/buffer
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        while(d!='1' && d!='2' && d!='3' && d!='4')
+        {
+            cout<<"impossible, reessayez : " ;
+            cin.get(d);
+            cin.clear(); //nettoyage du stream/buffer
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
         recuperation(nomfichier,d) ;
         return false ;
         
@@ -104,7 +112,7 @@ bool Catalogue::Menu ()
         bool norme = conformiteNomFichier(nomfichier);
         while (!norme)
         {
-            cout <<" nom de fichier non conforme... Reessayez : " ; 
+            cout <<" nom de fichier non conforme... Reessayez : " ;
             cin.getline(nomfichier,100);
             norme = conformiteNomFichier(nomfichier);
         }
@@ -115,10 +123,18 @@ bool Catalogue::Menu ()
         cout <<"3. Sauvegarde selon la ville de départ et/ou ville d'arrivée. " << endl ;
         cout <<"4. Sauvegarde selon une sélection de trajets. "<< endl ;
         cout <<"------------------------------------------------------------------"<< endl ;
+        cout <<"choix : " ;
         char d ;
         cin.get(d);
         cin.clear(); //nettoyage du stream/buffer
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        while(d!='1' && d!='2' && d!='3' && d!='4')
+        {
+            cout<<"impossible, reessayez : " ;
+            cin.get(d);
+            cin.clear(); //nettoyage du stream/buffer
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
         sauvegarde(nomfichier,d) ;
         return false ;
         
@@ -345,6 +361,7 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
         getline(fichier,nbTC);
         int nbrTS = stoi(nbTS);
         int nbrTC = stoi(nbTC);
+        fichier.seekp(0);
         
         switch (selection)
         {
@@ -536,11 +553,12 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
                         modeT[j]=line[k];
                         j++ ;
                     }
-    
+                    cout << villeD << villeA << modeT << endl ;
                     //si un filtre de ville est selectionné, alors il faut que la ville corresponde.
                     if ((selectvD && strcmp(villeDepart,villeD)==0) || (selectvA && strcmp(villeArrivee,villeA)==0)
                         ||(!(selectvD)&&!(selectvA)&&(!selectIntervalle)) || (selectIntervalle &&nbrTrajet>=borneinf && nbrTrajet<=bornesup))
                     {
+                        cout << villeD << villeA << modeT << endl ;
                         TrajetSimple *t = new TrajetSimple(villeD,villeA,modeT);
                         AjoutTrajet(t);
                     }
@@ -571,7 +589,7 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
                     if ((selectvD&&strcmp(villeDepart,villeD)==0)|| (selectvA && strcmp(villeArrivee,villeA)==0)
                         ||(!(selectvD)&&!(selectvA)&&(!selectIntervalle)) || (selectIntervalle&& nbrTrajet>=borneinf && nbrTrajet<=bornesup))
                     {
-                        int nbrEtapes = line[i+1] - '0';
+                        int nbrEtapes = line[i+1] - '0'; //conversion d'un char vers un int en utilisant le code ascii
                     
                         for (int e=0 ; e<nbrEtapes ; e++) //AJOUT D'UNE VARIABLE NBR ETAPES
                         {
@@ -734,13 +752,25 @@ void Catalogue::sauvegarde(const char*nomfichier, char selection)
     int nbTC = 0;
     int nbTS = 0;
     
+    bool append = false ;
     if (fichier)
     {
-        cout << "Le fichier existe déjà, voulez-vous l'écraser ?(e), écrire à la suite ?(s) ou abandonner?(a) " << endl;
+        cout << "Le fichier existe déjà, voulez-vous l'écraser ? -> (e)"
+             << "\n écrire à la suite ? -> (s)"
+             << "\n abandonner la demande ? -> (a) " << endl;
         int fait = 0;
+        cout <<"choix : " ; 
         cin.get(c);
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        while (c!='e' && c!='s' && c!='a')
+        {
+            cout<<"Nous n'avons pas compris \n reessayez : ";
+            cin.get(c);
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+        
         while (!fait)
         {
             fait = 1;
@@ -753,6 +783,7 @@ void Catalogue::sauvegarde(const char*nomfichier, char selection)
             }
             else if (c == 's')
             {
+                append = true ;
                 //recuperation n° au début
                 string nbr1, nbr2 ;
                 getline(fichier,nbr1,'-');
@@ -764,7 +795,7 @@ void Catalogue::sauvegarde(const char*nomfichier, char selection)
                 
                 fichier.close();
                 Erase_First_Line(nomfichier);//effacement de la ligne contenant les numéros au début en réécrivant le reste
-                fichier.open(nomfichier, ios_base::ate);//puis réécriture à la fin
+                fichier.open(nomfichier,std:: ofstream::out | ios_base::ate );//puis réécriture à la fin
                 
             }
             else if (c=='a')
@@ -787,7 +818,13 @@ void Catalogue::sauvegarde(const char*nomfichier, char selection)
     
     cout << "on redirige le buffer vers le fichier" << endl ;
     streambuf *oldStreamBuffer = cout.rdbuf(fichier.rdbuf());
-    fichier.seekp(5); //on fait de la place pour l'affichage des nombres de trajet
+    
+    //initialisation de la premiere ligne du fichier
+    if (!append)
+    {
+         cout<<tailleActuelle<<'-'<<tailleActuelle<<endl;
+    }
+
     for (unsigned int i = borne1; i < borne2; i++)
     {
         const char type = tableau[i]->getType();
@@ -830,7 +867,7 @@ void Catalogue::sauvegarde(const char*nomfichier, char selection)
     
     //on met à jour le fichier avec les nombre de trajet au debut
     fichier.seekp(0);
-    cout << nbTS << "-" << nbTC << endl;
+    cout << nbTS << "-" << nbTC << endl ;
     
     cout.rdbuf(oldStreamBuffer);
     fichier.close();
@@ -849,7 +886,7 @@ bool Catalogue::conformiteNomFichier(const char* nomfichier)
     }
     for (int i=0 ; i<length-4 ; i++)
     {
-        if (nomfichier[i]==':'){ //le double point n'est jamais accepté sous Linux/Mac
+        if (nomfichier[i]==':' || nomfichier[i]=='\0' || nomfichier[i]=='\\'){ //le double point n'est jamais accepté sous Mac
             return false ;
         }
         
@@ -869,123 +906,7 @@ bool Catalogue::conformiteNomFichier(const char* nomfichier)
 
 
 void Catalogue::rechercherUnTrajetAvance() const {
-    char* depart = new char[40];
-    char* arrivee = new char[40];
-    cout << "----------------------------RECHERCHE-----------------------------" << endl;
-    cout << "DEPART : ";
-    cin >> depart;
-    cout << endl;
-    cout << "ARRIVEE : ";
-    cin >> arrivee;
-    cout << endl;
-    
-    int trouve = 0;
-    const char* dpt = depart;
-    const char* arv = arrivee;
-    Tableau *resInterm = new Tableau(1);
-    
-    unsigned int indiceASauter= 2000;
-    unsigned int indiceASauter2 = 2000;
-    unsigned int indiceASauter3 = 2000;
-    int k = resInterm->getTailleActuelle();
-    
-    // bool stop2 = false;
-    for (unsigned int i = 0; i < tailleActuelle; i++)
-    {
-        if (strcmp(dpt, tableau[i]->getVilleDepart()) == 0 && (strcmp(arv, tableau[i]->getVilleArrivee()) == 0))
-        {
-            tableau[i]->Afficher();
-            i++;
-            trouve++;
-        }
-        
-        if (strcmp(dpt, tableau[i]->getVilleDepart()) == 0 && i < tailleActuelle)
-        {
-            //delete resInterm ; //reinitialisation du tableau stockant toutes les
-            //etapes aboutissant a la ville d'Arrivee
-            resInterm = new Tableau(5);
-            resInterm->AjoutTrajet(tableau[i]);
-            //trouve++;
-            k = resInterm->getTailleActuelle();
-            
-            if (strcmp(arv, tableau[i]->getVilleArrivee()) != 0 /*&& stop2==false */&& indiceASauter != i)
-            {
-                for (unsigned int j = 0; j < tailleActuelle; j++)
-                {
-                    
-                    if (strcmp(tableau[i]->getVilleArrivee(), tableau[j]->getVilleDepart()) == 0 && indiceASauter2 != j)
-                    {
-                        Tableau *res2 = resInterm;
-                        //Tableau *res2 = new Tableau(5);
-                        resInterm->AjoutTrajet(tableau[j]);
-                        trouve++;
-                        k = resInterm->getTailleActuelle();
-                        
-                        if (strcmp(arv, resInterm->getElement(k - 1)->getVilleArrivee()) == 0)
-                        {
-                            resInterm->Afficher();
-                        }
-                        //delete resInterm ;
-                        resInterm = new Tableau(5);
-                        resInterm->AjoutTrajet(tableau[i]);
-                        trouve++;
-                        k = resInterm->getTailleActuelle();
-                        
-                        if (strcmp(arv, tableau[j]->getVilleArrivee()) != 0)
-                        {
-                            for (unsigned int u = 0; u < tailleActuelle; u++)
-                            {
-                                if (strcmp(tableau[j]->getVilleArrivee(), tableau[u]->getVilleDepart()) == 0 && indiceASauter3 != u)
-                                {
-                                    res2->AjoutTrajet(tableau[u]);
-                                    trouve++;
-                                    k = res2->getTailleActuelle();
-                                    if (strcmp(arv, res2->getElement(k - 1)->getVilleArrivee()) == 0)
-                                    {
-                                        res2->Afficher();
-                                        //delete res2;
-                                        res2 = new Tableau(5);
-                                        res2->AjoutTrajet(tableau[i]);
-                                        trouve++;
-                                        //res2->AjoutTrajet(tableau[j]);////
-                                        k = res2->getTailleActuelle();
-                                        //delete res2 ;
-                                    }
-                                }
-                                else {
-                                    indiceASauter3 = u;
-                                }
-                            }
-                            
-                        }
-                        //delete [] res2 ;
-                        //delete resInterm ;
-                    }
-                    else {
-                        indiceASauter2 = j;
-                    }
-                }
-                
-            }
-            else {
-                indiceASauter = i;
-                
-            }
-            //delete resInterm ;
-        }
-        
-    }
-    
-    if (trouve == 0)
-    {
-        cout << "aucun trajet correspondant à vos critères n'est disponible..." << endl;
-    }
-    
-    cout << "-----------------------------------------------------------------" << endl;
-    //delete resInterm ;
-    delete [] depart ;
-    delete [] arrivee ;
-    
+ //enlever pour un souci de lisibilite
     
 } //----- Fin de Méthode RechercherUnTrajetAvance
 
@@ -1003,12 +924,12 @@ void Catalogue::Erase_First_Line(const char* File)
         {
             Line++;
             if (Line != 0) //Si la ligne atteinte est différente de la ligne à supprimer...
-                Buffer += line + "\n"; //On ajoute le contenu de la ligne dans le contenu à réécrire
+                Buffer += line +'\n' ; //On ajoute le contenu de la ligne dans le contenu à réécrire
         }
     }
-    ReadFile.close(); //On ferme le fichier en lecture
+    ReadFile.close();
     
-    ofstream WriteFile(File); //On ouvre ce même fichier en écriture
+    ofstream WriteFile(File);
     WriteFile << Buffer.c_str(); //On écris le texte dedans
-    WriteFile.close(); //et on ferme le fichier
+    WriteFile.close();
 }
