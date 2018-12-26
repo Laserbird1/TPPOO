@@ -81,15 +81,10 @@ private :
     //en composant Trajets Simples et Trajets Composes.
     //contrat : la ville de départ et la ville d'arrivée doivent faire moins de 39 characteres sans espace.
 
-    
     void affichageOptionsMenu() const ;
     //Mode d'emploi: méthode de sorties standards permettant d'afficher les instructions
     //du menu. (sinon, surchage de la méthode Menu();
     //contrat: choix entre 0 et 2
-    
-    bool isIn(Trajet* test);
-    //Mode d'emploi: pour sauvegarde, eviter les doublons
-    //Contrat :
     
     void recuperation(const char* nomfichier, char selection);
     //Mode d'emploi: 
@@ -105,13 +100,14 @@ private :
     //méthode vérifie la conformité du nom de fichier pour la création:
     //le nom doit se terminer par .txt, ne peut contenir ':', et ne peut commencer
     //par un '.'.
-    //Contrat : aucun 
+    //Contrat : aucun
+    
+    char* verificationInput(int size, bool typeChaine);
     
   
 protected:
 //----------------------------------------------------- Méthodes protégées
 
-    void Erase_First_Line(const char* File); 
     
 //----------------------------------------------------- Attributs protégés
 

@@ -72,12 +72,18 @@ bool Catalogue::Menu ()
         cout <<"------------------------RESTITUTION-------------------------------" <<endl ;
         cout <<"Attention, n'oubliez pas le .txt! Longueur max. 100 char" << endl ;
         cout <<"nom du fichier source : ";
-        cin.getline(nomfichier,100);
+        //cin.getline(nomfichier,100);
+        char* ans = verificationInput(100,true);
+        strcpy(nomfichier,ans);
+        delete [] ans ;
+        
         bool norme = conformiteNomFichier(nomfichier);
         while(!norme)
         {
             cout <<"nom de fichier non conforme... Reessayez : " ;
-            cin.getline(nomfichier,100);
+            char* ans = verificationInput(100,true);
+            strcpy(nomfichier,ans);
+            delete [] ans ;
             norme = conformiteNomFichier(nomfichier);
         }
         cout <<"Quel type de restitution souhaitez-vous effectuer?"<< endl ;
@@ -108,12 +114,12 @@ bool Catalogue::Menu ()
         cout <<"------------------------SAUVEGARDE-------------------------------" <<endl ;
         cout <<"Attention, n'oubliez pas le .txt! Longueur max. 100 char" << endl ;
         cout <<"nom du fichier cible : " ;
-        cin.getline(nomfichier,100);
+        strcpy(nomfichier,verificationInput(100,true));
         bool norme = conformiteNomFichier(nomfichier);
         while (!norme)
         {
             cout <<" nom de fichier non conforme... Reessayez : " ;
-            cin.getline(nomfichier,100);
+            strcpy(nomfichier,verificationInput(100,true));
             norme = conformiteNomFichier(nomfichier);
         }
         cout <<"Quel type de sauvegarde souhaitez-vous effectuer?"<< endl ;
@@ -172,7 +178,7 @@ Catalogue::~Catalogue ( )
 } //----- Fin de ~Catalogue
 
 
-//------------------------------------------------------------------ PRIVE
+//------------------------------------------------------------------ Protégé
 void Catalogue::rechercherUnTrajet() const {
     char* depart = new char[40];
     char* arrivee = new char[40];
@@ -211,14 +217,20 @@ void Catalogue::ajouterUnTrajetSimple()
 	cout<<"------------------------AJOUT TRAJET SIMPLE----------------------" <<endl ;
 	cout<<"Attention: ne pas inserer d'espaces" <<endl;
 	cout<<"Ville de depart    : ";
-    cin.getline(villeDep,40);
+    
+    char* ans = verificationInput(40,true) ;
+    strcpy(villeDep,ans);
+    delete [] ans ;
     cout<<endl;
     cout<<"Ville de d'arrivee : ";
-    cin.clear() ;
-    cin.getline(villeArr,40);
+    ans = verificationInput(40,true);
+    strcpy(villeArr,ans);
+    delete [] ans ;
     cout<<endl;
 	cout<<"Moyen de transport : ";
-    cin.getline(modeT,40);
+    ans = verificationInput(40,false) ;
+    strcpy(modeT,ans);
+    delete [] ans ;
     cout<<endl;
     cout <<villeDep <<", "<<villeArr<<", "<<modeT<<endl ;
 	TrajetSimple *trajet = new TrajetSimple(villeDep, villeArr, modeT);
@@ -246,13 +258,19 @@ void Catalogue::ajouterUnTrajetCompose()
 	cout<<i<<"e Etape : "<< endl;
 	cout<<"Ville de depart    : ";
     //cin.ignore();
-    cin.getline(vD,40);
+    char * ans = verificationInput(40,true) ;
+    strcpy(vD,ans);
+    delete [] ans ;
     cout<<endl;
 	cout<<"Ville d'arrivee    : ";
-    cin.getline(vA,40);
+    ans = verificationInput(40,true) ;
+    strcpy(vA,ans);
+    delete [] ans ;
     cout<<endl;
 	cout << "Moyen de transport : ";
-    cin.getline(mT,40);
+    ans = verificationInput(40,false) ;
+    strcpy(mT,ans);
+    delete [] ans ;
 	cout << endl;
     strcpy(villeDepart,vD);
     strcpy(villeArrPrecedente,vA);
@@ -268,7 +286,9 @@ void Catalogue::ajouterUnTrajetCompose()
 		cout<<i<<"e Etape : "<< endl;
         strcpy(vDsuite,villeArrPrecedente);
         cout<<"Ville de passage   : ";
-        cin.getline(vAsuite,40);
+        ans = verificationInput(40,false) ;
+        strcpy(vAsuite,ans);
+        delete [] ans ;
         villeArrPrecedente = strcpy(villeArrPrecedente,vAsuite);
 
         cout << endl;
@@ -357,12 +377,24 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
         char c ;
         
         string nbTS, nbTC ;
+        
         getline(fichier,nbTS,'-');
+        if (fichier.eof() || fichier.fail() || nbTS.empty())
+        {
+            cout <<"Le fichier n'est pas aux normes... Abandon" << endl ;
+            return ;
+        }
         getline(fichier,nbTC);
+        if (fichier.eof() || fichier.fail() || nbTS.empty())
+        {
+            cout <<"Le fichier n'est pas aux normes... Abandon" << endl ;
+            return ;
+        }
         int nbrTS = stoi(nbTS);
         int nbrTC = stoi(nbTC);
-        fichier.seekp(0);
         
+        fichier.seekp(0);
+        char* ans ;
         switch (selection)
         {
             case '1' :
@@ -437,28 +469,21 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
                 }
                 
                 cout <<" c : " << c << endl ;
-                if (c=='1')
+                if (c=='1' || c=='3')
                 {
                     cout <<"Ville de départ : " ;
-                    cin.getline(villeDepart,40) ;
+                    ans = verificationInput(40,true);
+                    strcpy(villeDepart,ans);
+                    delete [] ans ;
                     selectvD = true ;
                 }
-                else if (c=='2')
+                if (c=='2' || c=='3')
                 {
                     cout <<"Ville d'arrivée : " ;
-                    cin.getline(villeArrivee,40) ;
+                    ans = verificationInput(40,true);
+                    strcpy(villeArrivee,ans);
+                    delete [] ans ;
                     selectvA = true ;
-                }
-                else
-                {
-                    cout <<"Ville de départ : " ;
-                    cin.getline(villeDepart,40) ;
-                    cout << endl ;
-                    cout <<"Ville d'arrivée : " ;
-                    cin.getline(villeArrivee,40) ;
-                    selectvA = true ;
-                    selectvD = true ;
-                    
                 }
                 
                 break ;
@@ -467,7 +492,9 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
                 char nbr1[40]={} ;
                 char nbr2[40]={} ;
                 cout <<"borne inférieure : " ;
-                cin.getline(nbr1,40) ;
+                ans = verificationInput(40,true) ;
+                strcpy(nbr1,ans);
+                delete [] ans ;
                 try
                 {
                     borneinf = stoi(nbr1) ;
@@ -478,7 +505,9 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
                     return ;
                 }
                 cout <<"borne supérieure : " ;
-                cin.getline(nbr2,40) ;
+                ans = verificationInput(40,true);
+                strcpy(nbr2,ans);
+                delete [] ans ;
                 try
                 {
                     bornesup = stoi(nbr2) ;
@@ -521,6 +550,8 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
         while (!fichier.eof())
         {
             getline(fichier,line);
+            cout << line << endl ;
+            cout << line[0] << endl ;
             if (line[0]=='#')
             {
                 nbrTrajet ++ ;
@@ -647,7 +678,7 @@ void Catalogue::sauvegarde(const char*nomfichier, char selection)
     unsigned int borne1 = 0;
     unsigned int borne2 = tailleActuelle;
     char c;
-    
+    char* ans ;
     switch (selection)
     {
         case '1':
@@ -704,13 +735,17 @@ void Catalogue::sauvegarde(const char*nomfichier, char selection)
             if (c == '1' || c=='3')
             {
                 cout << "Rentrez la ville de départ : " ;
-                cin.getline(selectvilleD, 40);
+                char* ans = verificationInput(40,true);
+                strcpy(selectvilleD,ans);
+                delete [] ans ;
                 cout << endl;
             }
             if (c == '2' || c=='3')
             {
                 cout << "Rentrez la ville d'arrivée : " ;
-                cin.getline(selectvilleA, 40);
+                ans = verificationInput(40,true);
+                strcpy(selectvilleA,ans);
+                delete [] ans ;
                 cout << endl;
             }
             break;//du 3
@@ -719,9 +754,14 @@ void Catalogue::sauvegarde(const char*nomfichier, char selection)
             char b2[5]= {} ;
             
             cout << "Combien voulez de trajets ? " ;
-            cin.getline(b2,5);
+            ans = verificationInput(5,true);
+            strcpy(b2,ans);
+            delete [] ans ;
             cout << "A partir d'où voulez vous partir ? " ;
             cin.getline(b1,5);
+            ans = verificationInput(5,true);
+            strcpy(b1,ans);
+            delete [] ans ;
             try
             {
                 borne1 = stoi(b1);
@@ -759,7 +799,7 @@ void Catalogue::sauvegarde(const char*nomfichier, char selection)
              << "\n écrire à la suite ? -> (s)"
              << "\n abandonner la demande ? -> (a) " << endl;
         int fait = 0;
-        cout <<"choix : " ; 
+        cout <<"choix : " ;
         cin.get(c);
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -794,9 +834,10 @@ void Catalogue::sauvegarde(const char*nomfichier, char selection)
                 nbTC = stoi(nbr2);
                 
                 fichier.close();
-                Erase_First_Line(nomfichier);//effacement de la ligne contenant les numéros au début en réécrivant le reste
-                fichier.open(nomfichier,std:: ofstream::out | ios_base::ate );//puis réécriture à la fin
-                
+                //Erase_First_Line(nomfichier);//effacement de la ligne contenant les numéros au début en réécrivant le reste
+                fichier.open(nomfichier,std:: ofstream::app);//puis réécriture à la fin
+                //fichier.seekp(ios_base::end);
+                cout << fichier.tellp()<< endl ;
             }
             else if (c=='a')
             {
@@ -810,19 +851,18 @@ void Catalogue::sauvegarde(const char*nomfichier, char selection)
             }
         }
     }
-    else//le fichier n'existe pas
+    else//le fichier n'existe pas : on le créé.
     {
         fichier.close();
         fichier.open(nomfichier, ios_base::out);
     }
-    
-    cout << "on redirige le buffer vers le fichier" << endl ;
+
     streambuf *oldStreamBuffer = cout.rdbuf(fichier.rdbuf());
     
     //initialisation de la premiere ligne du fichier
     if (!append)
     {
-         cout<<tailleActuelle<<'-'<<tailleActuelle<<endl;
+        cout<<tailleActuelle<<'-'<<tailleActuelle<<endl;
     }
 
     for (unsigned int i = borne1; i < borne2; i++)
@@ -864,17 +904,16 @@ void Catalogue::sauvegarde(const char*nomfichier, char selection)
             tableau[i]->outputFormate();
         }
     }
-    
+
     //on met à jour le fichier avec les nombre de trajet au debut
+    fichier.close();
+    fichier.open(nomfichier,ios::in | ios::out);
     fichier.seekp(0);
     cout << nbTS << "-" << nbTC << endl ;
     
     cout.rdbuf(oldStreamBuffer);
     fichier.close();
 }
-
-
-
 
 
 bool Catalogue::conformiteNomFichier(const char* nomfichier)
@@ -886,7 +925,7 @@ bool Catalogue::conformiteNomFichier(const char* nomfichier)
     }
     for (int i=0 ; i<length-4 ; i++)
     {
-        if (nomfichier[i]==':' || nomfichier[i]=='\0' || nomfichier[i]=='\\'){ //le double point n'est jamais accepté sous Mac
+        if (nomfichier[i]==':' || nomfichier[i]=='\0' || nomfichier[i]=='/'){ //le double point n'est jamais accepté sous Mac
             return false ;
         }
         
@@ -912,24 +951,30 @@ void Catalogue::rechercherUnTrajetAvance() const {
 
 //----------------------------------------------------- Méthodes protégées
 
-void Catalogue::Erase_First_Line(const char* File)
+char* Catalogue::verificationInput(int size,  bool typeChaine)
 {
-    string Buffer = ""; //Variable contenant le texte à réécrire dans le fichier
-    ifstream ReadFile(File);
-    if (ReadFile) //Si le fichier est trouvé
+    bool verif = false ;
+    char *input= new char[100] ;
+    while (!verif)
     {
-        string line=new char[200];
-        int Line = 0;
-        while (getline(ReadFile, line)) //on parcours le fichier et on initialise line à la ligne actuelle
+        cin.getline(input,size);
+        if (!cin)
         {
-            Line++;
-            if (Line != 0) //Si la ligne atteinte est différente de la ligne à supprimer...
-                Buffer += line +'\n' ; //On ajoute le contenu de la ligne dans le contenu à réécrire
+            cout <<"Erreur !";
+            if (cin.eof())
+                cout <<"Fin de stream atteinte..." << endl ;
+            else if (cin.fail())
+                cout <<"Saisie non-compatible..." << endl ;
+        }
+        else if (strlen(input)==0 && typeChaine)
+        {
+            cout <<"Erreur : chaine vide..." ;
+        }
+        else
+        {
+            verif = true;
         }
     }
-    ReadFile.close();
-    
-    ofstream WriteFile(File);
-    WriteFile << Buffer.c_str(); //On écris le texte dedans
-    WriteFile.close();
+    cout << endl ;
+    return input ;
 }
