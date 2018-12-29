@@ -467,8 +467,7 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
                     
                 }
-                
-                cout <<" c : " << c << endl ;
+            
                 if (c=='1' || c=='3')
                 {
                     cout <<"Ville de départ : " ;
@@ -491,6 +490,8 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
             case '4' :
                 char nbr1[40]={} ;
                 char nbr2[40]={} ;
+                cout <<"RAPPEL  ";
+                (nbrTC+nbrTS)>1 ? cout<<(nbrTC+nbrTS)<<" trajets"<<endl : cout<<(nbrTC+nbrTS)<<" trajet" << endl ;
                 cout <<"borne inférieure : " ;
                 ans = verificationInput(40,true) ;
                 strcpy(nbr1,ans);
@@ -525,7 +526,7 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
             
             
                 int taille = stoi(nbTS) + stoi(nbTC) ;
-                cout << "taille : " << taille << endl ;
+                
                 
                 if (taille!=0)
                 {
@@ -584,12 +585,15 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
                         modeT[j]=line[k];
                         j++ ;
                     }
-                    cout << villeD << villeA << modeT << endl ;
+                    
                     //si un filtre de ville est selectionné, alors il faut que la ville corresponde.
-                    if ((selectvD && strcmp(villeDepart,villeD)==0) || (selectvA && strcmp(villeArrivee,villeA)==0)
-                        ||(!(selectvD)&&!(selectvA)&&(!selectIntervalle)) || (selectIntervalle &&nbrTrajet>=borneinf && nbrTrajet<=bornesup))
+                    if ((selectvD && strcmp(villeDepart,villeD)==0 && !selectvA)
+                        || (selectvA && strcmp(villeArrivee,villeA)==0 && (!selectvD))
+                        || (selectvA && selectvD && strcmp(villeDepart,villeD)==0 && strcmp(villeArrivee,villeA)==0 )
+                        || (!(selectvD) && !(selectvA) && (!selectIntervalle))
+                        || (selectIntervalle &&nbrTrajet>=borneinf && nbrTrajet<=bornesup))
                     {
-                        cout << villeD << villeA << modeT << endl ;
+                        
                         TrajetSimple *t = new TrajetSimple(villeD,villeA,modeT);
                         AjoutTrajet(t);
                     }
@@ -617,42 +621,53 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
                         j++ ;
                     }
 
-                    if ((selectvD&&strcmp(villeDepart,villeD)==0)|| (selectvA && strcmp(villeArrivee,villeA)==0)
-                        ||(!(selectvD)&&!(selectvA)&&(!selectIntervalle)) || (selectIntervalle&& nbrTrajet>=borneinf && nbrTrajet<=bornesup))
+                    if ((selectvD && strcmp(villeDepart,villeD)==0 && !selectvA)
+                        || (selectvA && strcmp(villeArrivee,villeA)==0 && (!selectvD))
+                        || (selectvA && selectvD && strcmp(villeDepart,villeD)==0 && strcmp(villeArrivee,villeA)==0 )
+                        || (!(selectvD) && !(selectvA) && (!selectIntervalle))
+                        || (selectIntervalle &&nbrTrajet>=borneinf && nbrTrajet<=bornesup))
                     {
                         int nbrEtapes = line[i+1] - '0'; //conversion d'un char vers un int en utilisant le code ascii
                     
                         for (int e=0 ; e<nbrEtapes ; e++) //AJOUT D'UNE VARIABLE NBR ETAPES
                         {
                             getline(fichier,line);
-                            int i= 0;
-                            int j = 0 ;
-                            char etapeD[40] = {};
-                            while(line[i]!=',') //on commence au premier caractere appartenant a villeD
-                            {
-                                etapeD[j]=line[i];
-                                i++ ;
-                                j++ ;
-                            }
-                            i++ ;
-                            char etapeA[40] = {} ;
-                            j= 0 ;
                             
-                            while(line[i]!=',')
+                            if (line[0]=='S')
                             {
-                                etapeA[j]=line[i];
+                                addTrajetSimple(line,ensembleT);
+                            }
+                            else
+                            {
+                                Tableau *sousEns = new Tableau();
+                                char villeInterD[40]={} ;
+                                int i= 2;
+                                int j = 0 ;
+                                while (line[i]!=',')
+                                {
+                                    villeInterD[j]=line[i];
+                                    i++ ;
+                                    j++ ;
+                                }
+                                
                                 i++ ;
-                                j++ ;
+                                char villeInterA[40]={} ;
+                                j= 0 ;
+                                while(line[i]!=',')
+                                {
+                                    villeInterA[j]=line[i];
+                                    i++ ;
+                                    j++ ;
+                                }
+                                int nbrSousEtapes = line[i+1] - '0';
+                                for (int k=0 ; k<nbrSousEtapes ; k++)
+                                {
+                                    getline(fichier,line);
+                                    addTrajetSimple(line,sousEns);
+                                }
+                                TrajetCompose *inter = new TrajetCompose(villeInterD,villeInterA,sousEns);
+                                ensembleT->AjoutTrajet(inter);
                             }
-                            char mT[40] = {} ;
-                            j =0 ;
-                            for (unsigned long k=i+1 ; k<line.length(); k++)
-                            {
-                                mT[j]=line[k];
-                                j++ ;
-                            }
-                            TrajetSimple *t = new TrajetSimple(etapeD,etapeA,mT);
-                            ensembleT->AjoutTrajet(t);
                         }
                         TrajetCompose *tc = new TrajetCompose(villeD,villeA,ensembleT);
                         AjoutTrajet(tc);
@@ -890,7 +905,7 @@ void Catalogue::sauvegarde(const char*nomfichier, char selection)
         
         if (ajout)
         {
-            fichier << '#' << type << ',';
+            fichier << '#' ;
             //incrémentation du nombre de trajet par type
             if (type=='S')
             {
@@ -977,4 +992,36 @@ char* Catalogue::verificationInput(int size,  bool typeChaine)
     }
     cout << endl ;
     return input ;
+}
+
+void Catalogue::addTrajetSimple(string line, Tableau *ensembleT)
+{
+    int i= 2; //
+    int j = 0 ;
+    char etapeD[40] = {};
+    while(line[i]!=',') //on commence au premier caractere appartenant a villeD
+    {
+        etapeD[j]=line[i];
+        i++ ;
+        j++ ;
+    }
+    i++ ;
+    char etapeA[40] = {} ;
+    j= 0 ;
+    
+    while(line[i]!=',')
+    {
+        etapeA[j]=line[i];
+        i++ ;
+        j++ ;
+    }
+    char mT[40] = {} ;
+    j =0 ;
+    for (unsigned long k=i+1 ; k<line.length(); k++)
+    {
+        mT[j]=line[k];
+        j++ ;
+    }
+    TrajetSimple *t = new TrajetSimple(etapeD,etapeA,mT);
+    ensembleT->AjoutTrajet(t);
 }

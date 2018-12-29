@@ -53,7 +53,7 @@ char TrajetSimple::getType()
 
 void TrajetSimple::outputFormate() const 
 {
-  cout<<villeDepart<<','<<villeArrivee<<','<<modeTransport<<endl; 
+  cout<<'S'<<','<<villeDepart<<','<<villeArrivee<<','<<modeTransport<<endl; 
 }
 //-------------------------------------------- Constructeurs - destructeur
 

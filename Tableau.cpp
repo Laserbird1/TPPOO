@@ -67,6 +67,8 @@ Trajet* Tableau::getElement(unsigned int i) const
 void Tableau::Afficher()const
 {
 	cout<<"-----------------------------CATALOGUE---------------------------"<<endl;
+    cout<<"Nous vous proposons " << tailleActuelle << " Trajet" ; 
+    tailleActuelle >1 ? cout<<"s"<<endl : cout<<endl ;
 	for(unsigned int i=0; i<tailleActuelle; i++)
         {
 		tableau[i]->Afficher();

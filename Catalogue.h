@@ -103,6 +103,12 @@ private :
     //Contrat : aucun
     
     char* verificationInput(int size, bool typeChaine);
+    //Mode d'emploi:
+    //Contrat :
+    
+    void addTrajetSimple(string line, Tableau *ensembleT) ;
+    //Mode d'emploi :
+    //Contrat :
     
   
 protected:

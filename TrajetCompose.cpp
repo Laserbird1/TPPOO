@@ -60,7 +60,7 @@ const char* TrajetCompose::getModeTransport() const
 
 void TrajetCompose::outputFormate() const 
 {
-   cout<<villeDepart<<','<<villeArrivee<<','<<ensEtapes->getTailleActuelle()<<endl; 
+   cout<<'C'<<','<<villeDepart<<','<<villeArrivee<<','<<ensEtapes->getTailleActuelle()<<endl; 
    unsigned int tailleA = ensEtapes->getTailleActuelle() ; 
   for (unsigned int i=0 ; i<tailleA; i++)
   {
