@@ -114,7 +114,9 @@ bool Catalogue::Menu ()
         cout <<"------------------------SAUVEGARDE-------------------------------" <<endl ;
         cout <<"Attention, n'oubliez pas le .txt! Longueur max. 100 char" << endl ;
         cout <<"nom du fichier cible : " ;
-        strcpy(nomfichier,verificationInput(100,true));
+	char * ans = verificationInput(100,true); 
+        strcpy(nomfichier,ans);
+	delete [] ans ; 
         bool norme = conformiteNomFichier(nomfichier);
         while (!norme)
         {
@@ -490,7 +492,7 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
             case '4' :
                 char nbr1[40]={} ;
                 char nbr2[40]={} ;
-                cout <<"RAPPEL  ";
+                cout <<"RAPPEL : le fichier contient  ";
                 (nbrTC+nbrTS)>1 ? cout<<(nbrTC+nbrTS)<<" trajets"<<endl : cout<<(nbrTC+nbrTS)<<" trajet" << endl ;
                 cout <<"borne inférieure : " ;
                 ans = verificationInput(40,true) ;
@@ -551,8 +553,6 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
         while (!fichier.eof())
         {
             getline(fichier,line);
-            cout << line << endl ;
-            cout << line[0] << endl ;
             if (line[0]=='#')
             {
                 nbrTrajet ++ ;
@@ -688,8 +688,8 @@ void Catalogue::sauvegarde(const char*nomfichier, char selection)
 {
     bool selectTC = true;
     bool selectTS = true;
-    char* selectvilleA = new char[40];
-    char* selectvilleD = new char[40];
+    char selectvilleA[40]={};
+    char selectvilleD[40]={};
     unsigned int borne1 = 0;
     unsigned int borne2 = tailleActuelle;
     char c;
@@ -790,10 +790,7 @@ void Catalogue::sauvegarde(const char*nomfichier, char selection)
             
             --borne1; //mise en repère tableau (rentrer 1 donnera le premier élément situé en [0])
             
-            
-            borne1 = borne1 < 0 ? 0 : borne1;
-            borne2 = borne2 < 0 ? 0 : borne2;//ici la valeur de cb de trajet a prendre !
-            
+                       
             borne1 = borne1 < tailleActuelle ? borne1 : tailleActuelle;
             borne2= borne1+borne2 < tailleActuelle ? borne1+borne2 : tailleActuelle;
             break;
