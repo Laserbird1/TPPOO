@@ -1,16 +1,16 @@
-/**************************************************************************************
+/******************************************************************************************
  Catalogue  -  Réalisation
  -------------------
  début                : 20/11/2018
- copyright            : (C)2018 par Grazia Giulia RIBBENI et Julie DELPUECH
- e-mail               : julie.delpuech@insa-lyon.fr, grazia-giulia.ribbeni@insa-lyon.fr
- ***************************************************************************************/
+ copyright            : (C)2018 par Edouard DE BRYE et Julie DELPUECH
+ e-mail               : julie.delpuech@insa-lyon.fr, edouard.de-brye@insa-lyon.fr
+ *******************************************************************************************/
 
-//---------- Réalisation de la classe <Catalogue> (fichier Catalogue.cpp) ------------
+//---------- Réalisation de la classe <Catalogue> (fichier Catalogue.cpp) -------------------
 
-//---------------------------------------------------------------- INCLUDE
+//----------------------------------------------------------------------------------- INCLUDE
 
-//-------------------------------------------------------- Include système
+//--------------------------------------------------------------------------- Include système
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
@@ -26,16 +26,16 @@
 
 using namespace std;
 
-//------------------------------------------------------ Include personnel
+//---------------------------------------------------------------------------- Include personnel
 #include "Catalogue.h"
 #include "TrajetSimple.h"
 #include "TrajetCompose.h"
 
-//------------------------------------------------------------- Constantes
+//----------------------------------------------------------------------------------- Constantes
 
-//----------------------------------------------------------------- PUBLIC
+//--------------------------------------------------------------------------------------- PUBLIC
 
-//----------------------------------------------------- Méthodes publiques
+//--------------------------------------------------------------------------- Méthodes publiques
 bool Catalogue::Menu ()
 {
     char c ;
@@ -152,7 +152,8 @@ bool Catalogue::Menu ()
     
     }else
     {
-        cout << "Attention ! Nous ne vous avons pas compris, veuillez \n saisir un numéro entre 1 et 8... " << endl ;
+        cout << "Attention ! Nous ne vous avons pas compris, veuillez \n
+        <<" saisir un numéro entre 1 et 8... " << endl ;
         return false ;
     }
     
@@ -160,7 +161,7 @@ bool Catalogue::Menu ()
 } //----- Fin de Méthode Menu
 
 
-//---------------------------------------------------------------- Constructeurs - destructeur
+//--------------------------------------------------------------------- Constructeurs - destructeur
 
 Catalogue::Catalogue ( ): Tableau(0)
 {
@@ -180,7 +181,7 @@ Catalogue::~Catalogue ( )
 } //----- Fin de ~Catalogue
 
 
-//------------------------------------------------------------------ Protégé
+//-------------------------------------------------------------------------------------------- Privé
 void Catalogue::rechercherUnTrajet() const {
     char* depart = new char[40];
     char* arrivee = new char[40];
@@ -195,7 +196,8 @@ void Catalogue::rechercherUnTrajet() const {
     
     for (unsigned int i=0 ; i<tailleActuelle ; i++)
     {
-         if (strcmp(tableau[i]->getVilleDepart(),depart)==0 && strcmp(tableau[i]->getVilleArrivee(),arrivee)==0)
+         if (strcmp(tableau[i]->getVilleDepart(),depart)==0 &&
+             strcmp(tableau[i]->getVilleArrivee(),arrivee)==0)
          {
              tableau[i]->Afficher() ;
              findings ++ ;
@@ -937,7 +939,7 @@ bool Catalogue::conformiteNomFichier(const char* nomfichier)
     }
     for (int i=0 ; i<length-4 ; i++)
     {
-        if (nomfichier[i]==':' || nomfichier[i]=='\0' || nomfichier[i]=='/'){ //le double point n'est jamais accepté sous Mac
+        if (nomfichier[i]==':' || nomfichier[i]=='\0' || nomfichier[i]=='/'){ //: refusé sous Mac
             return false ;
         }
         
@@ -957,11 +959,10 @@ bool Catalogue::conformiteNomFichier(const char* nomfichier)
 
 
 void Catalogue::rechercherUnTrajetAvance() const {
- //enlever pour un souci de lisibilite
+ //enlever par souci de lisibilité
     
 } //----- Fin de Méthode RechercherUnTrajetAvance
 
-//----------------------------------------------------- Méthodes protégées
 
 char* Catalogue::verificationInput(int size,  bool typeChaine)
 {
@@ -1022,3 +1023,5 @@ void Catalogue::addTrajetSimple(string line, Tableau *ensembleT)
     TrajetSimple *t = new TrajetSimple(etapeD,etapeA,mT);
     ensembleT->AjoutTrajet(t);
 }
+
+//-------------------------------------------------------------------------- Méthodes protégées

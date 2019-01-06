@@ -2,8 +2,8 @@
  Catalogue  -  Interface
  -------------------
  début                : 20/11/2018
- copyright            : (C)2018 par Grazia Giulia RIBBENI et Julie DELPUECH
- e-mail               : julie.delpuech@insa-lyon.fr, grazia-giulia.ribbeni@insa-lyon.fr
+ copyright            : (C)2018 par Edouard DE BRYE et Julie DELPUECH
+ e-mail               : julie.delpuech@insa-lyon.fr, edouard.de-brye@insa-lyon.fr
  ***************************************************************************************/
 
 //---------- Interface de la classe <Catalogue> (fichier Catalogue.h) ----------------
@@ -73,13 +73,15 @@ private :
     //de départ et la ville d'arrivée concernées, et affiche tous les trajets
     //simple et/ou compose ayant ces attributs exactement. Il ne compose pas de trajet
     //simples et/ou composes.
-    //contrat : la ville de départ et la ville d'arrivée doivent faire moins de 39 characteres sans espace.
+    //contrat : la ville de départ et la ville d'arrivée doivent faire
+    // moins de 39 characteres sans espace.
     
     void rechercherUnTrajetAvance() const ;
     //Mode d'emploi: Demande via des entrées/sorties standards la ville de
     //départ et la ville d'arrivée, affiche tous les trajets possibles
     //en composant Trajets Simples et Trajets Composes.
-    //contrat : la ville de départ et la ville d'arrivée doivent faire moins de 39 characteres sans espace.
+    //contrat : la ville de départ et la ville d'arrivée doivent faire
+    //moins de 39 characteres sans espace.
 
     void affichageOptionsMenu() const ;
     //Mode d'emploi: méthode de sorties standards permettant d'afficher les instructions
@@ -87,14 +89,27 @@ private :
     //contrat: choix entre 0 et 2
     
     void recuperation(const char* nomfichier, char selection);
-    //Mode d'emploi: 
-    //Contrat :
+    //Mode d'emploi: prend en paramètre le nom du fichier et le type de sélection
+    //à opérer. En fonction de ce dernier, les trajets compris dans le fichier de nom nomfichier
+    //seront ajoutés ou non au catalogue.
+    //Types de récupérations :
+    //totale - tous les trajets sont ajoutés au catalogue
+    //selon le type - tous les trajets du type selectionné sont ajoutés (le type est soit
+    //trajet simple, soit trajet composé)
+    //selon la ville de départ - tous les trajets ayant cette ville de départ sont ajoutés
+    //selon la ville d'arrivée - tous les trajets ayant cette ville d'arrivée sont ajoutés
+    //selon la ville de départ ET la ville d'arrivée - tous les trajets ayant cette ville de
+    //départ ET cette ville d'arrivée sont ajoutés
+    //selon un intervalle [a,b] - tous les trajets compris dans cette intervalle sont ajoutés.
+    //si l'intervalle déborde, alors il est ramené aux limites du possible.
+    
+    //Contrat : le fichier correspondant au nomfichier, s'il existe, doit être aux normes stipulées
+    //dans notre compte-rendu.
     
     void sauvegarde(const char* nomfichier,char selection);
     //Mode d'emploi:
     //Contrat :
 
-    
     bool conformiteNomFichier(const char* nomfichier) ;
     //Mode d'emploi: prend en paramètre un nom de fichier souhaité. Cette
     //méthode vérifie la conformité du nom de fichier pour la création:
@@ -103,11 +118,14 @@ private :
     //Contrat : aucun
     
     char* verificationInput(int size, bool typeChaine);
-    //Mode d'emploi:
+    //Mode d'emploi: méthode appelée à chaque entrée de type chaîne de caractère.
+    //vérifie l'état du buffer et nettoie le buffer.
     //Contrat :
     
     void addTrajetSimple(string line, Tableau *ensembleT) ;
-    //Mode d'emploi :
+    //Mode d'emploi : Ajoute un trajet simple dont les informations (aux normes
+    //stipulées dans notre CR) sont comprise dans la chaîne prise en paramètre "line"
+    //à un ensemble de type Tableau.
     //Contrat :
     
   
