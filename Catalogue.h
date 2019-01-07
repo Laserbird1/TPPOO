@@ -107,20 +107,22 @@ private :
     //dans notre compte-rendu.
     
     void sauvegarde(const char* nomfichier,char selection);
-    //Mode d'emploi:
-    //Contrat :
+    //Mode d'emploi:  prend en paramètre le nom du fichier et le type de sélection
+    //à opérer. En fonction de ce dernier, les trajets compris dans le catalogue
+    //seront ajoutés ou non au fichier dûment choisi.
+    //Contrat : il ne faut pas rentrer un nom de fichier qui est dans un dossier non repertorié.
+    // le nom du fichier lui même peut ne pas exister, il sera créé. MAIS PAS LE DOSSIER.
 
     bool conformiteNomFichier(const char* nomfichier) ;
     //Mode d'emploi: prend en paramètre un nom de fichier souhaité. Cette
     //méthode vérifie la conformité du nom de fichier pour la création:
-    //le nom doit se terminer par .txt, ne peut contenir ':', et ne peut commencer
-    //par un '.'.
+    //ne peut contenir ':', et ne peut commencer par un '.'.
     //Contrat : aucun
     
     char* verificationInput(int size, bool typeChaine);
     //Mode d'emploi: méthode appelée à chaque entrée de type chaîne de caractère.
     //vérifie l'état du buffer et nettoie le buffer.
-    //Contrat :
+    //Contrat : 
     
     void addTrajetSimple(string line, Tableau *ensembleT) ;
     //Mode d'emploi : Ajoute un trajet simple dont les informations (aux normes
