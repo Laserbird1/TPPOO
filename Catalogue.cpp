@@ -152,7 +152,7 @@ bool Catalogue::Menu ()
     
     }else
     {
-        cout << "Attention ! Nous ne vous avons pas compris, veuillez \n
+        cout << "Attention ! Nous ne vous avons pas compris, veuillez \n"
         <<" saisir un numéro entre 1 et 8... " << endl ;
         return false ;
     }
@@ -602,7 +602,6 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
                     
                 } else if (line[1]=='C' && selectTC) //CAS D'UN TRAJET COMPOSE
                 {
-                    Tableau *ensembleT = new Tableau(2);
                     char villeD[40]={} ;
                     int i= 3;
                     int j = 0 ;
@@ -629,6 +628,7 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
                         || (!(selectvD) && !(selectvA) && (!selectIntervalle))
                         || (selectIntervalle &&nbrTrajet>=borneinf && nbrTrajet<=bornesup))
                     {
+                        Tableau *ensembleT = new Tableau(2);
                         int nbrEtapes = line[i+1] - '0'; //conversion d'un char vers un int en utilisant le code ascii
                     
                         for (int e=0 ; e<nbrEtapes ; e++) //AJOUT D'UNE VARIABLE NBR ETAPES
@@ -671,6 +671,7 @@ void Catalogue::recuperation(const char* nomfichier, char selection)
                                 ensembleT->AjoutTrajet(inter);
                             }
                         }
+                       
                         TrajetCompose *tc = new TrajetCompose(villeD,villeA,ensembleT);
                         AjoutTrajet(tc);
                     }
@@ -937,24 +938,15 @@ bool Catalogue::conformiteNomFichier(const char* nomfichier)
     {
         return false ;
     }
-    for (int i=0 ; i<length-4 ; i++)
+    for (int i=0 ; i<length ; i++)
     {
-        if (nomfichier[i]==':' || nomfichier[i]=='\0' || nomfichier[i]=='/'){ //: refusé sous Mac
+        if (nomfichier[i]==':' || nomfichier[i]=='\0'){ //: refusé sous Mac
             return false ;
         }
         
     }
     
-    //l'extension doit etre la bonne
-    if (nomfichier[length-1]=='t' && nomfichier[length-2]=='x' && nomfichier[length-3]=='t'
-        && nomfichier[length-4]=='.')
-    {
-        return true ;
-    }
-    else
-    {
-        return false ;
-    }
+   return true;
 }
 
 

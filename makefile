@@ -12,7 +12,7 @@ EXE = Utilisation
 EFFACE = clean 
 LIBS = -Im 
 RMFLAGS = -f
-CPPFLAGS = -W -Wall -g -pedantic -O2 -Wextra -ansi -std=c++11 
+CPPFLAGS = -W -Wall -g -pedantic -O2 -Wextra -ansi -std=c++11 -D MAP
 
 
 
